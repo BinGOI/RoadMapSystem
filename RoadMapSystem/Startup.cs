@@ -9,6 +9,11 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using RoadMapSystem.Models;
+using RoadMapSystem.Models.DB;
+using Microsoft.EntityFrameworkCore;
 
 namespace RoadMapSystem
 {
@@ -31,8 +36,10 @@ namespace RoadMapSystem
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            // Add ASPNETCoreDemoDBContext services.
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddDbContext<RoadMapSystem.Models.DB.RoadMapSystemContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("Server=tcp:dobysh.database.windows.net,1433;Initial Catalog=RoadMapSystem;Persist Security Info=False;User ID=serverAdmin;Password=Admin12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
