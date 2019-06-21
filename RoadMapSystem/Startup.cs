@@ -38,8 +38,8 @@ namespace RoadMapSystem
 
             // Add ASPNETCoreDemoDBContext services.
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddDbContext<RoadMapSystem.Models.DB.RoadMapSystemContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("Server=tcp:dobysh.database.windows.net,1433;Initial Catalog=RoadMapSystem;Persist Security Info=False;User ID=serverAdmin;Password=Admin12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")));
+            services.AddDbContext<RoadMapSystemContext>(options => 
+                options.UseSqlServer("Server=tcp:dobysh.database.windows.net,1433;Initial Catalog=RoadMapSystem;Persist Security Info=False;User ID=serverAdmin;Password=Admin12345;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
