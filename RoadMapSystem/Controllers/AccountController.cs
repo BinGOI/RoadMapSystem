@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RoadMapSystem.Models;
 using RoadMapSystem.Models.DB;
@@ -32,6 +33,54 @@ namespace RoadMapSystem.Controllers
         {
             return View();
         }
+        public IActionResult Register()
+        {
+            ViewBag.EmployeeRoleId = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName");
+            ViewBag.RankId = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                EmployeeAccount employeeAccount = await _context.EmployeeAccount.FirstOrDefaultAsync(u => u.Login == model.Login);
+                if (employeeAccount == null)
+                {
+               
+                    employeeAccount = new EmployeeAccount
+                    {
+                        Login = model.Login,
+                        Password = model.Password
+                    };
+                    _context.EmployeeAccount.Add(employeeAccount);
+                    await _context.SaveChangesAsync();
+                    Employee employee = new Employee
+                    {
+                        EmployeeId = employeeAccount.EmployeeAccountId,
+                        Name = model.Name,
+                        Surname = model.Surname,
+                        Patronymic = model.Patronymic,
+                        Email = model.Email,
+                        EmployeeRoleId = model.EmployeeRoleId,
+                        RankId = model.RankId,
+                        PhoneNumber = model.PhoneNumber
+                       
+                    };
+                    _context.Employee.Add(employee);
+                    await _context.SaveChangesAsync();
+                    await Authenticate(employee); // аутентификация
+                    return RedirectToAction("Index", "Home");
+
+                }
+                ModelState.AddModelError("", "Такий логін вже використано");
+            }
+            ViewBag.EmployeeRoleId = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName");
+            ViewBag.RankId = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle");
+            return View(model);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -42,7 +91,7 @@ namespace RoadMapSystem.Controllers
                 Employee employee = await _context.Employee.Include(u => u.EmployeeAccount).FirstOrDefaultAsync(u => u.EmployeeAccount.Login == model.Login && u.EmployeeAccount.Password == model.Password);
                 if (employee != null)
                 {
-                    await Authenticate(employee); // аутентификация
+                    await Authenticate(employee); 
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -51,6 +100,8 @@ namespace RoadMapSystem.Controllers
             return View(model);
         }
 
+
+
         private async Task Authenticate(Employee employee)
         {
 
@@ -58,7 +109,7 @@ namespace RoadMapSystem.Controllers
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, employee.EmployeeAccount.Login),
                 //new Claim(ClaimsIdentity.DefaultRoleClaimType, employee.EmployeeType.EmployyeTypeDescription),
-                new Claim("Namee", employee.Name),
+                new Claim("Name", employee.Name),
                 new Claim("Surname", employee.Surname),
                 new Claim("Patronymic", employee.Patronymic)
             };
