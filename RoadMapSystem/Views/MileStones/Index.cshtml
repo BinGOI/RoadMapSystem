@@ -1,41 +1,80 @@
-﻿@model IEnumerable<RoadMapSystem.Models.DB.MileStone>
+﻿@IEnumerable<RoadMapSystem.Models.DB.MileStone>
+@using System.Security.Claims
+
+@using System.Linq;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Details";
 }
 
-<h2>Index</h2>
+<div class="row">
+    <h1>@Model.EmployeeSkillValue.Employee.Surname  @Model.EmployeeSkillValue.Employee.Name</h1>
+    <hr />
+    <br>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div style="background-color:lightgreen" class="panel-heading">
+                Інформація
+            </div>
+            @foreach (var item in Model)
+            {
+            <div style="background-color:lightgreen" class="panel-body">
+                @Html.DisplayNameFor(modelItem => item.Date) @Html.DisplayFor(model => model.Date)
+                <br>
+                @Html.DisplayNameFor(model => model.PhoneNumber) @Html.DisplayFor(model => model.PhoneNumber)
+                <br>
+                @Html.DisplayNameFor(model => model.EmployeeRole) @Html.DisplayFor(model => model.EmployeeRole.EmployeeRoleName)
+                <br>
+                @Html.DisplayNameFor(model => model.Rank) @Html.DisplayFor(model => model.Rank.EmployeeRankTitle)
+                <br>
+                @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
+                {
+                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@Model.EmployeeId">Редагувати</a>
+                }
+               </div>
+            }
+        </div>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EmployeeSkillValue)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeeSkillValue.EmployeeSkillValueId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MileStoneId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MileStoneId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MileStoneId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+
+
+
+    <h2>Index</h2>
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EmployeeSkillValue)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmployeeSkillValue.EmployeeSkillValueId)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.MileStoneId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.MileStoneId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.MileStoneId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

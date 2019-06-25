@@ -1,0 +1,74 @@
+﻿@model RoadMapSystem.Models.DB.MileStone
+@using System.Security.Claims
+@using System.Linq;
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="row">
+    <h1>@Model.Surname  @Model.Name  @Model.Patronymic</h1>
+    <hr />
+    <br>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div style="background-color:lightgreen" class="panel-heading">
+                Інформація
+            </div>
+            <div style="background-color:lightgreen" class="panel-body">
+                @Html.DisplayNameFor(model => model.Email) @Html.DisplayFor(model => model.Email)
+                <br>
+                @Html.DisplayNameFor(model => model.PhoneNumber) @Html.DisplayFor(model => model.PhoneNumber)
+                <br>
+                @Html.DisplayNameFor(model => model.EmployeeRole) @Html.DisplayFor(model => model.EmployeeRole.EmployeeRoleName)
+                <br>
+                @Html.DisplayNameFor(model => model.Rank) @Html.DisplayFor(model => model.Rank.EmployeeRankTitle)
+                <br>
+                @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
+                {
+                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@Model.EmployeeId">Редагувати</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div style="background-color:lightyellow" class="panel-heading">
+                Ментори
+            </div>
+            <div style="background-color:lightyellow" class="panel-body">
+                @foreach (var mentor in Model.EmployeeMentorsIntern)
+                {
+                    @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
+                    <br>
+                }
+            </div>
+        </div>
+
+    </div>
+    @if (Model.EmployeeRole.EmployeeRoleName == "Team Lead" || Model.EmployeeRole.EmployeeRoleName == "HR")
+    {
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div style="background-color:lightblue" class="panel-heading">
+                    Підопічні
+                </div>
+                <div style="background-color:lightblue" class="panel-body">
+                    @foreach (var mentor in Model.EmployeeMentorsMentor)
+                    {
+                        @(mentor.Intern.Name + " " + mentor.Intern.Surname + " " + mentor.Intern.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Intern.EmployeeAccount.Login">Переглянути</a>
+                        <br>
+                    }
+                    @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
+                    {
+                        <a asp-controller="Account" asp-action="Register" asp-route-mentorlogin="@User.FindFirst(u => u.Type == ClaimTypes.Name).Value">Додати підопічного</a>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
