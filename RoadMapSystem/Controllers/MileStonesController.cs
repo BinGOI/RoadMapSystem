@@ -27,11 +27,16 @@ namespace RoadMapSystem.Controllers
             }
 
             var roadMapSystemContext = _context.MileStone.Include(m => m.EmployeeSkillValue)
+                .Include(m => m.EmployeeSkillValue.Skill)
                 .Include(m => m.Comment)
                 .Include(m => m.EmployeeSkillValue.Employee)
-                .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsMentor)
+                .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
+                .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
                 .Where(m => m.EmployeeSkillValue.Employee.EmployeeAccount.Login == login);
 
+            var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
+            ViewBag.Name = Login.Name;
+            ViewBag.Surname = Login.Surname;
             if (roadMapSystemContext == null)
             {
                 return NotFound();
