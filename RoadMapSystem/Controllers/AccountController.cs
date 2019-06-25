@@ -33,10 +33,12 @@ namespace RoadMapSystem.Controllers
         {
             return View();
         }
-        public IActionResult Register()
+        public IActionResult Register(string mentorlogin)
         {
             ViewBag.EmployeeRoleId = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName");
             ViewBag.RankId = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle");
+            int mentorId = _context.EmployeeAccount.FirstOrDefault(u => u.Login == mentorlogin).EmployeeAccountId;
+            ViewBag.MentorId = mentorId;
             return View();
         }
 
@@ -71,7 +73,15 @@ namespace RoadMapSystem.Controllers
                     };
                     _context.Employee.Add(employee);
                     await _context.SaveChangesAsync();
-                    await Authenticate(employee); // аутентификация
+                    EmployeeMentors employeeMentors = new EmployeeMentors
+                    {
+                        MentorId = model.MentorId,
+                        InternId = employee.EmployeeId,
+                        DataOfMileStone = DateTime.Now
+                    };
+                    _context.EmployeeMentors.Add(employeeMentors);
+                    await _context.SaveChangesAsync();
+                   // await Login(new LoginModel() { Login = model.Login, Password = model.Password}); // аутентификация
                     return RedirectToAction("Index", "Home");
 
                 }
@@ -79,6 +89,7 @@ namespace RoadMapSystem.Controllers
             }
             ViewBag.EmployeeRoleId = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName");
             ViewBag.RankId = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle");
+            
             return View(model);
         }
 
@@ -88,7 +99,7 @@ namespace RoadMapSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                Employee employee = await _context.Employee.Include(u => u.EmployeeAccount).FirstOrDefaultAsync(u => u.EmployeeAccount.Login == model.Login && u.EmployeeAccount.Password == model.Password);
+                Employee employee = await _context.Employee.Include(u => u.EmployeeAccount).Include(u=> u.EmployeeRole).FirstOrDefaultAsync(u => u.EmployeeAccount.Login == model.Login && u.EmployeeAccount.Password == model.Password);
                 if (employee != null)
                 {
                     await Authenticate(employee); 
@@ -108,10 +119,11 @@ namespace RoadMapSystem.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, employee.EmployeeAccount.Login),
-                //new Claim(ClaimsIdentity.DefaultRoleClaimType, employee.EmployeeType.EmployyeTypeDescription),
-                new Claim("Name", employee.Name),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, employee.EmployeeRole.EmployeeRoleName),
+                new Claim("Namee", employee.Name),
                 new Claim("Surname", employee.Surname),
-                new Claim("Patronymic", employee.Patronymic)
+                new Claim("Patronymic", employee.Patronymic),
+                
             };
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);

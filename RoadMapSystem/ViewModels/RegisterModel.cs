@@ -23,5 +23,7 @@ namespace RoadMapSystem.ViewModels
         public int EmployeeRoleId { get; set; }
         public int RankId { get; set; }
 
+        public int MentorId { get; set; }
+
     }
 }
