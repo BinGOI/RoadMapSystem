@@ -1,41 +1,67 @@
 ﻿@model IEnumerable<RoadMapSystem.Models.DB.MileStone>
+@using System.Security.Claims
+
+@using System.Linq;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Details";
 }
 
-<h2>Index</h2>
+<div class="row">
+    <h1>@ViewBag.Name  @ViewBag.Surname</h1>
+    <hr />
+    <br>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EmployeeSkillValue)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeeSkillValue.EmployeeSkillValueId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MileStoneId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MileStoneId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MileStoneId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div style="background-color:lightgreen" class="panel-heading">
+                    Інформація
+                </div>
+                <div style="background-color:lightgreen" class="panel-body">
+                    @Html.DisplayNameFor(modelItem => item.Date) @Html.DisplayFor(modelItem => item.Date)
+                    <br>
+                    @Html.DisplayNameFor(modelItem => item.EmployeeSkillValue.Skill.SkillTitle) @Html.DisplayFor(modelItem => item.EmployeeSkillValue.Skill.SkillTitle)
+                    <br>
+                    @Html.DisplayName("Mentors")
+                    @foreach (var mentor in item.EmployeeSkillValue.Employee.EmployeeMentorsIntern)
+                    {
+                        @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
+                        <br>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div style="background-color:lightyellow" class="panel-heading">
+                    Коментарі
+                </div>
+                <div style="background-color:lightyellow" class="panel-body">
+                    @foreach (var comment in item.Comment)
+                    {
+                        @("Comment from" + comment.MileStone.EmployeeSkillValue.Employee.Name + " " + comment.MileStone.EmployeeSkillValue.Employee.Surname) <a asp-action="Info" asp-route-login="@comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login">Переглянути</a>
+                        <br>
+                        @Html.DisplayName("Comment") @Html.DisplayFor(modelItem => comment.CommentValue)
+                    }
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div style="background-color:lightyellow" class="panel-heading">
+                    Опис
+                </div>
+                <div style="background-color:lightyellow" class="panel-body">
+                    @Html.DisplayNameFor(model => item.EmployeeSkillValue.Skill.SkillTitle) @Html.DisplayFor(model => item.EmployeeSkillValue.Skill.SkillTitle)
+                    <br />
+                    @Html.DisplayNameFor(model => item.EmployeeSkillValue.Skill.DescriptionOfSkill) @Html.DisplayFor(model => item.EmployeeSkillValue.Skill.DescriptionOfSkill)
+                </div>
+            </div>
+
+        </div>
+    }
+
+</div>
