@@ -11,4 +11,13 @@
                     window.location.href = "Info/?login=" + mentorLogin +""
                 }
             });
-        }
+}
+
+
+
+$(document).ready(function () {
+    var length = $('#EmployeeExistingSelect').children('option').length;
+    if (length <= 0) {
+        $("#divExist").attr("hidden", true);
+    }
+});

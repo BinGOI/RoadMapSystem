@@ -126,6 +126,7 @@ namespace RoadMapSystem.Controllers
             ViewData["EmployeeRoleId"] = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName", employee.EmployeeRoleId);
             ViewData["RankId"] = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle", employee.RankId);
             ViewBag.Login = employee.EmployeeAccount.Login;
+
             return View(employee);
         }
 

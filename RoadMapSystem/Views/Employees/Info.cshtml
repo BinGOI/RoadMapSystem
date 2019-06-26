@@ -58,18 +58,23 @@
                     {
                         @(mentor.Intern.Name + " " + mentor.Intern.Surname + " " + mentor.Intern.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Intern.EmployeeAccount.Login">Переглянути</a> @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
                         {
-                            <a asp-controller="Employees" asp-action="RemoveExistingIntern" asp-route-mentorlogin="@Model.EmployeeAccount.Login" asp-route-internid ="@mentor.InternId">Відмовитися від підлпічного</a>
+                            <a  asp-controller="Employees" asp-action="RemoveExistingIntern" asp-route-mentorlogin="@Model.EmployeeAccount.Login" asp-route-internid="@mentor.InternId">Відмовитися від підлпічного</a>
                         }
                         <br>
 
                     }
+                    <br>
                     @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
                     {
-                        <a asp-controller="Account" asp-action="Register" asp-route-mentorlogin="@Model.EmployeeAccount.Login">Додати нового підопічного</a>
+                        <a class="btn btn-primary" asp-controller="Account" asp-action="Register" asp-route-mentorlogin="@Model.EmployeeAccount.Login">Додати нового підопічного</a>
                         <br>
-                        <select id="EmployeeExistingSelect" class="form-control" asp-items="ViewBag.Employee"></select>
                         <br>
-                        <button id="AddExistButton" onclick="ClickExistingUser('@Model.EmployeeAccount.Login')" class="btn btn-primary">Додати існуючого підопічного</button>
+                        <div id="divExist">
+                            <select id="EmployeeExistingSelect" class="form-control" asp-items="ViewBag.Employee"></select>
+                            <br>
+                            <button id="AddExistButton" onclick="ClickExistingUser('@Model.EmployeeAccount.Login')" class="btn btn-primary">Додати існуючого підопічного</button>
+                        </div>
+
                     }
 
                 </div>
