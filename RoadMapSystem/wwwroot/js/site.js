@@ -13,11 +13,24 @@
             });
 }
 
+function ClickPanel(idPanel) {
+    var ArrayPanel = ["InfoPanel", "MailStonePanel", "SkillPanel"];
+    for (var i = 0; i < ArrayPanel.length; i++) {
+        if (i == idPanel) {
+            $("#" + ArrayPanel[i]).removeAttr('hidden');
+        }
+        else {
+            $("#" + ArrayPanel[i]).attr("hidden", true);
+        }
+    }
 
+}
 
 $(document).ready(function () {
     var length = $('#EmployeeExistingSelect').children('option').length;
     if (length <= 0) {
         $("#divExist").attr("hidden", true);
     }
+
+
 });
