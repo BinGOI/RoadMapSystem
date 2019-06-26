@@ -45,11 +45,17 @@ namespace RoadMapSystem.Controllers
             {
                 return NotFound();
             }
-
+            var employeeLessRang = _context.Employee.Where(e => e.RankId < employee.RankId);
+            List<int> tempIdList = employee.EmployeeMentorsMentor.Select(q => q.Intern.EmployeeId).ToList();
+            var employeeMaybe = employeeLessRang.Where(q => !tempIdList.Contains(q.EmployeeId));
+            var employeeMaybeSelectList =employeeMaybe.Select(e => new
+            {
+                EmpId = e.EmployeeId,
+                Name = e.Name + " " + e.Surname + " " + e.Patronymic
+            }).ToList();
+            ViewBag.Employee = new SelectList(employeeMaybeSelectList, "EmpId", "Name");
             return View(employee);
         }
-
-
 
         // GET: Employees/Create
         public IActionResult Create()
@@ -57,6 +63,51 @@ namespace RoadMapSystem.Controllers
             ViewData["EmployeeRoleId"] = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName");
             ViewData["RankId"] = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle");
             return View();
+        }
+
+
+        public IActionResult AddExistingIntern(string MentorLogin, int? InternId)
+        {
+            if(MentorLogin == null || InternId == null)
+            {
+                return NotFound();
+
+            }
+            var Mentor = _context.Employee.Include(m => m.EmployeeAccount).Where(m=>m.EmployeeAccount.Login == MentorLogin).First();
+            var Intern = _context.Employee.Find(InternId);
+            if(Mentor == null || Intern == null)
+            {
+                return NotFound();
+            }
+            EmployeeMentors employeeMentors = new EmployeeMentors
+            {
+                MentorId = Mentor.EmployeeId,
+                InternId = Intern.EmployeeId,
+                DataOfMileStone = DateTime.Now
+            };
+            _context.EmployeeMentors.Add(employeeMentors);
+            _context.SaveChangesAsync();
+            return RedirectToAction("Info", new { login = Mentor.EmployeeAccount.Login });
+        }
+
+        public IActionResult RemoveExistingIntern(string MentorLogin, int? InternId)
+        {
+            if (MentorLogin == null || InternId == null)
+            {
+                return NotFound();
+
+            }
+            var Mentor = _context.Employee.Include(m => m.EmployeeAccount).Where(m => m.EmployeeAccount.Login == MentorLogin).First();
+            var Intern = _context.Employee.Find(InternId);
+            if (Mentor == null || Intern == null)
+            {
+                return NotFound();
+            }
+            var InternMentor = _context.EmployeeMentors.Include(m => m.Mentor).Where(m => m.Mentor.EmployeeAccount.Login == MentorLogin && m.InternId == InternId);
+            _context.EmployeeMentors.RemoveRange(InternMentor);
+            _context.SaveChangesAsync();
+            return RedirectToAction("Info", new { login = Mentor.EmployeeAccount.Login });
+
         }
 
         // GET: Employees/Edit/5

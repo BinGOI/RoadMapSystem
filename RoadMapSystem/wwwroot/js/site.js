@@ -2,3 +2,13 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+        function ClickExistingUser(mentorLogin) {
+            jQuery.ajax({
+                url: "AddExistingIntern",
+                type: "GET",
+                data: "MentorLogin=" + mentorLogin + "&InternId=" + $("#EmployeeExistingSelect").val(),
+                success: function () {
+                    window.location.href = "Info/?login=" + mentorLogin +""
+                }
+            });
+        }

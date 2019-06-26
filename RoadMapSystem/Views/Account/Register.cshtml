@@ -59,9 +59,18 @@
             </div>
             <div hidden class="form-group">
                 <label asp-for="MentorId" class="control-label"></label>
-                <input asp-for="MentorId" value ="@ViewBag.MentorId"  class="form-control" />
+                <input asp-for="MentorId" value="@ViewBag.MentorId" class="form-control" />
                 <span asp-validation-for="Patronymic" class="text-danger"></span>
             </div>
+
+            @foreach (string skill in ViewBag.SkillList)
+            {
+        <div  class="form-group">
+            <label asp-for="SkillsValue[skill]" class="control-label">@skill</label>
+            <select asp-for="SkillsValue[skill]" class="form-control" asp-items="ViewBag.SkillValueId"></select>
+        </div>
+            }
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>

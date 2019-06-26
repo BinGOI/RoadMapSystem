@@ -37,8 +37,18 @@ namespace RoadMapSystem.Controllers
         {
             ViewBag.EmployeeRoleId = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName");
             ViewBag.RankId = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle");
-            int mentorId = _context.EmployeeAccount.FirstOrDefault(u => u.Login == mentorlogin).EmployeeAccountId;
-            ViewBag.MentorId = mentorId;
+            var Skills = _context.Skill.Select(u => u.SkillTitle).Distinct();
+            ViewBag.SkillValueId= new SelectList(_context.SkillValue, "SkillValueId", "SkillValueTitle");
+            ViewBag.SkillList = Skills;
+            if(!(mentorlogin == null || mentorlogin == ""))
+            {
+                int mentorId = _context.EmployeeAccount.FirstOrDefault(u => u.Login == mentorlogin).EmployeeAccountId;
+                ViewBag.MentorId = mentorId;
+            }
+            else
+            {
+                ViewBag.MentorId = "";
+            }
             return View();
         }
 
@@ -51,7 +61,7 @@ namespace RoadMapSystem.Controllers
                 EmployeeAccount employeeAccount = await _context.EmployeeAccount.FirstOrDefaultAsync(u => u.Login == model.Login);
                 if (employeeAccount == null)
                 {
-               
+
                     employeeAccount = new EmployeeAccount
                     {
                         Login = model.Login,
@@ -69,18 +79,31 @@ namespace RoadMapSystem.Controllers
                         EmployeeRoleId = model.EmployeeRoleId,
                         RankId = model.RankId,
                         PhoneNumber = model.PhoneNumber
-                       
+
                     };
                     _context.Employee.Add(employee);
                     await _context.SaveChangesAsync();
-                    EmployeeMentors employeeMentors = new EmployeeMentors
+                    if (model.MentorId != null)
                     {
-                        MentorId = model.MentorId,
-                        InternId = employee.EmployeeId,
-                        DataOfMileStone = DateTime.Now
-                    };
-                    _context.EmployeeMentors.Add(employeeMentors);
-                    await _context.SaveChangesAsync();
+                        EmployeeMentors employeeMentors = new EmployeeMentors
+                        {
+                            MentorId = model.MentorId.Value,
+                            InternId = employee.EmployeeId,
+                            DataOfMileStone = DateTime.Now
+                        };
+                        _context.EmployeeMentors.Add(employeeMentors);
+                    }
+
+                    foreach(var skillVal in model.SkillsValue)
+                    {
+                        EmployeeSkillValue employeeSkillValue = new EmployeeSkillValue
+                        {
+                            EmployeeId = employee.EmployeeId,
+                            SkillId = _context.Skill.Where(u => u.SkillTitle == skillVal.Key && u.SkillValueId == skillVal.Value).First().IdSkill
+                        };
+                        _context.EmployeeSkillValue.Add(employeeSkillValue);
+                    }
+                   await _context.SaveChangesAsync();
                    // await Login(new LoginModel() { Login = model.Login, Password = model.Password}); // аутентификация
                     return RedirectToAction("Index", "Home");
 
