@@ -14,54 +14,59 @@
 
     @foreach (var item in Model)
     {
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div style="background-color:lightgreen" class="panel-heading">
-                    Інформація
-                </div>
-                <div style="background-color:lightgreen" class="panel-body">
-                    @Html.DisplayNameFor(modelItem => item.Date) @Html.DisplayFor(modelItem => item.Date)
-                    <br>
-                    @Html.DisplayNameFor(modelItem => item.EmployeeSkillValue.Skill.SkillTitle) @Html.DisplayFor(modelItem => item.EmployeeSkillValue.Skill.SkillTitle)
-                    <br>
-                    @Html.DisplayName("Mentors")
-                    @foreach (var mentor in item.EmployeeSkillValue.Employee.EmployeeMentorsIntern)
-                    {
-                        @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div style="background-color:lightgreen" class="panel-heading">
+                        <b>Інформація про майлстоун для @item.EmployeeSkillValue.Skill.SkillTitle</b>
+                    </div>
+                    <div style="background-color:lightgreen" class="panel-body">
+                        <b>Дата майлстоуна:</b> @Html.DisplayFor(modelItem => item.Date)
                         <br>
-                    }
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div style="background-color:lightyellow" class="panel-heading">
-                    Коментарі
-                </div>
-                <div style="background-color:lightyellow" class="panel-body">
-                    @foreach (var comment in item.Comment)
-                    {
-                        @("Comment from" + comment.MileStone.EmployeeSkillValue.Employee.Name + " " + comment.MileStone.EmployeeSkillValue.Employee.Surname) <a asp-action="Info" asp-route-login="@comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login">Переглянути</a>
+                        <b>Скіл для перевірки:</b> @Html.DisplayFor(modelItem => item.EmployeeSkillValue.Skill.SkillTitle)
                         <br>
-                        @Html.DisplayName("Comment") @Html.DisplayFor(modelItem => comment.CommentValue)
-                    }
+                        <b>Ментори: </b>
+                        @foreach (var mentor in item.EmployeeSkillValue.Employee.EmployeeMentorsIntern)
+                        {
+                            @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <br /> <a asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
+                            <br>
+                        }
+                    </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div style="background-color:lightyellow" class="panel-heading">
+                        <b>Опис</b>
+                    </div>
+                    <div style="background-color:lightyellow" class="panel-body">
+                        <b>Назва скіла для перевірки: </b>@Html.DisplayFor(model => item.EmployeeSkillValue.Skill.SkillTitle)
+                        <br /><b>Опис: </b> @Html.DisplayFor(model => item.EmployeeSkillValue.Skill.DescriptionOfSkill)
+                    </div>
+                </div>
 
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div style="background-color:lightyellow" class="panel-heading">
-                    Опис
-                </div>
-                <div style="background-color:lightyellow" class="panel-body">
-                    @Html.DisplayNameFor(model => item.EmployeeSkillValue.Skill.SkillTitle) @Html.DisplayFor(model => item.EmployeeSkillValue.Skill.SkillTitle)
-                    <br />
-                    @Html.DisplayNameFor(model => item.EmployeeSkillValue.Skill.DescriptionOfSkill) @Html.DisplayFor(model => item.EmployeeSkillValue.Skill.DescriptionOfSkill)
-                </div>
             </div>
+            @if (item.Comment.Count != 0)
+            {
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div style="background-color:lightyellow" class="panel-heading">
+                            <b>Коментарі</b>
+                        </div>
+                        <div style="background-color:lightyellow" class="panel-body">
+                            @foreach (var comment in item.Comment)
+                            {
+                                @("Comment from" + comment.MileStone.EmployeeSkillValue.Employee.Name + " " + comment.MileStone.EmployeeSkillValue.Employee.Surname) <a asp-action="Info" asp-route-login="@comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login">Переглянути</a>
+                                <br>
+                                @Html.DisplayName("Comment") @Html.DisplayFor(modelItem => comment.CommentValue)
+                            }
+                        </div>
+                    </div>
 
+                </div>
+            }
         </div>
+
     }
 
 </div>
