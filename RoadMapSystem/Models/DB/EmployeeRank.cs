@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace RoadMapSystem.Models.DB
 {
@@ -12,6 +13,7 @@ namespace RoadMapSystem.Models.DB
         }
 
         public int EmployeeRankId { get; set; }
+        [Display(Name = "Рівень")]
         public string EmployeeRankTitle { get; set; }
 
         public ICollection<Employee> Employee { get; set; }

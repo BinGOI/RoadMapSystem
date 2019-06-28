@@ -19,9 +19,28 @@ namespace RoadMapSystem.Controllers
         }
 
         // GET: MileStones
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string login)
         {
-            var roadMapSystemContext = _context.MileStone.Include(m => m.EmployeeSkillValue);
+            if (login == null)
+            {
+                return NotFound();
+            }
+
+            var roadMapSystemContext = _context.MileStone.Include(m => m.EmployeeSkillValue)
+                .Include(m => m.EmployeeSkillValue.Skill)
+                .Include(m => m.Comment)
+                .Include(m => m.EmployeeSkillValue.Employee)
+                .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
+                .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
+                .Where(m => m.EmployeeSkillValue.Employee.EmployeeAccount.Login == login);
+
+            var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
+            ViewBag.Name = Login.Name;
+            ViewBag.Surname = Login.Surname;
+            if (roadMapSystemContext == null)
+            {
+                return NotFound();
+            }
             return View(await roadMapSystemContext.ToListAsync());
         }
 
@@ -155,5 +174,24 @@ namespace RoadMapSystem.Controllers
         {
             return _context.MileStone.Any(e => e.MileStoneId == id);
         }
+
+       /* public async Task<IActionResult> Info()
+        {
+
+            var employee = await _context.Employee
+                .Include(e => e.EmployeeRole)
+                .Include(e => e.Rank)
+                .Include(e => e.EmployeeAccount)
+                .Include(e => e.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
+                .Include(e => e.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
+
+                .FirstOrDefaultAsync(e => e.EmployeeAccount.Login == login);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return View(employee);
+        }*/
     }
 }

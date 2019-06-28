@@ -1,17 +1,32 @@
-﻿@model RoadMapSystem.Models.DB.Employee
-@using System.Security.Claims
+﻿@model RoadMapSystem.ViewModels.RegisterModel
+
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Register";
 }
 
-<h2>Редагувати профіль</h2>
+<h2>Register</h2>
 
+<h4>RegisterModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="EmployeeId" />
+            <div class="form-group">
+                <label asp-for="Login" class="control-label"></label>
+                <input asp-for="Login" class="form-control" />
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -27,39 +42,39 @@
                 <input asp-for="Patronymic" class="form-control" />
                 <span asp-validation-for="Patronymic" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
-            <div hidden class="form-group">
+            <div class="form-group">
+
                 <label asp-for="EmployeeRoleId" class="control-label"></label>
                 <select asp-for="EmployeeRoleId" class="form-control" asp-items="ViewBag.EmployeeRoleId"></select>
-                <span asp-validation-for="EmployeeRoleId" class="text-danger"></span>
-            </div>
-            <div hidden class="form-group">
-                <label asp-for="RankId" class="control-label"></label>
-                <select asp-for="RankId" class="form-control" asp-items="ViewBag.RankId"></select>
-                <span asp-validation-for="RankId" class="text-danger"></span>
-            </div>
-            <div hidden class="form-group">
-                <label asp-for="EmployeeAccount.Login" class="control-label"></label>
-                <input asp-for="EmployeeAccount.Login" value="@ViewBag.Login" class="form-control" />
-                <span asp-validation-for="EmployeeAccount.Login" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <label asp-for="RankId" class="control-label"></label>
+                <select asp-for="RankId" class="form-control" asp-items="ViewBag.RankId"></select>
+            </div>
+            <div hidden class="form-group">
+                <label asp-for="MentorId" class="control-label"></label>
+                <input asp-for="MentorId" value="@ViewBag.MentorId" class="form-control" />
+                <span asp-validation-for="Patronymic" class="text-danger"></span>
+            </div>
+
+            @foreach (string skill in ViewBag.SkillList)
+            {
+        <div  class="form-group">
+            <label asp-for="SkillsValue[skill]" class="control-label">@skill</label>
+            <select asp-for="SkillsValue[skill]" class="form-control" asp-items="ViewBag.SkillValueId"></select>
+        </div>
+            }
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Info" asp-route-login="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value">Назад</a>
 </div>
 

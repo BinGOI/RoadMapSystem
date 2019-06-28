@@ -1,0 +1,102 @@
+﻿@model RoadMapSystem.Models.DB.Employee
+@using System.Security.Claims
+@using System.Linq;
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+    <div class="row">
+        <h1>@Model.Surname  @Model.Name  @Model.Patronymic</h1>
+        <button class="btn btn-primary" onclick="ClickPanel(0)">Інформація</button><button class="btn btn-primary" onclick="ClickPanel(1)">Майлстоуни</button><button class="btn btn-primary" onclick="ClickPanel(2)">Навички</button>
+        <hr />
+        <br>
+        <div id="InfoPanel">
+            <div class="col-md-4">
+
+                <div class="panel panel-default">
+                    <div style="background-color:lightgreen" class="panel-heading">
+                        Інформація
+                    </div>
+                    <div style="background-color:lightgreen" class="panel-body">
+                        @Html.DisplayNameFor(model => model.Email) @Html.DisplayFor(model => model.Email)
+                        <br>
+                        @Html.DisplayNameFor(model => model.PhoneNumber) @Html.DisplayFor(model => model.PhoneNumber)
+                        <br>
+                        @Html.DisplayNameFor(model => model.EmployeeRole) @Html.DisplayFor(model => model.EmployeeRole.EmployeeRoleName)
+                        <br>
+                        @Html.DisplayNameFor(model => model.Rank) @Html.DisplayFor(model => model.Rank.EmployeeRankTitle)
+                        <br>
+                        @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
+                        {
+                            <a class="btn btn-success" asp-action="Edit" asp-route-id="@Model.EmployeeId">Редагувати</a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div style="background-color:lightyellow" class="panel-heading">
+                        Ментори
+                    </div>
+                    <div style="background-color:lightyellow" class="panel-body">
+                        @foreach (var mentor in Model.EmployeeMentorsIntern)
+                        {
+                            @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
+                            <br>
+                        }
+                    </div>
+                </div>
+
+            </div>
+            @if (Model.EmployeeRole.EmployeeRoleName == "Team Lead" || Model.EmployeeRole.EmployeeRoleName == "HR")
+            {
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div style="background-color:lightblue" class="panel-heading">
+                            Підопічні
+                        </div>
+                        <div style="background-color:lightblue" class="panel-body">
+                            @foreach (var mentor in Model.EmployeeMentorsMentor)
+                            {
+                                @(mentor.Intern.Name + " " + mentor.Intern.Surname + " " + mentor.Intern.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Intern.EmployeeAccount.Login">Переглянути</a> @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
+                                {
+                                    <a asp-controller="Employees" asp-action="RemoveExistingIntern" asp-route-mentorlogin="@Model.EmployeeAccount.Login" asp-route-internid="@mentor.InternId">Відмовитися від підлпічного</a>
+                                }
+                                <br>
+
+                            }
+                            <br>
+                            @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
+                            {
+                                <a class="btn btn-primary" asp-controller="Account" asp-action="Register" asp-route-mentorlogin="@Model.EmployeeAccount.Login">Додати нового підопічного</a>
+                                <br>
+                                <br>
+                                <div id="divExist">
+                                    <select id="EmployeeExistingSelect" class="form-control" asp-items="ViewBag.Employee"></select>
+                                    <br>
+                                    <button id="AddExistButton" onclick="ClickExistingUser('@Model.EmployeeAccount.Login')" class="btn btn-primary">Додати існуючого підопічного</button>
+                                </div>
+
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+            }
+        </div>
+        <div hidden id="MailStonePanel">
+            LOL1
+        </div>
+        <div hidden id="SkillPanel">
+            @foreach(var skill in Model.EmployeeSkillValue)
+            {
+                <h2>@skill.Skill.SkillTitle :  @skill.Skill.SkillValue.SkillValueTitle</h2>
+            }
+        </div>
+    </div>
+
+

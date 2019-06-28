@@ -19,16 +19,16 @@ namespace RoadMapSystem.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
-        {
-            var roadMapSystemContext = _context.Employee.Include(e => e.EmployeeRole).Include(e => e.Rank).Include(e => e.EmployeeAccount);
-            return View(await roadMapSystemContext.ToListAsync());
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //    var roadMapSystemContext = _context.Employee.Include(e => e.EmployeeRole).Include(e => e.Rank);
+        //    return View(await roadMapSystemContext.ToListAsync());
+        //}
 
         // GET: Employees/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Info(string login)
         {
-            if (id == null)
+            if (login == null)
             {
                 return NotFound();
             }
@@ -36,12 +36,25 @@ namespace RoadMapSystem.Controllers
             var employee = await _context.Employee
                 .Include(e => e.EmployeeRole)
                 .Include(e => e.Rank)
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
+                .Include(e => e.EmployeeAccount)
+                .Include(e => e.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
+                .Include(e => e.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
+                .Include(e => e.EmployeeSkillValue).ThenInclude(s => s.Skill).ThenInclude(s => s.SkillValue)
+
+                .FirstOrDefaultAsync(e => e.EmployeeAccount.Login == login);
             if (employee == null)
             {
                 return NotFound();
             }
-
+            var employeeLessRang = _context.Employee.Where(e => e.RankId < employee.RankId);
+            List<int> tempIdList = employee.EmployeeMentorsMentor.Select(q => q.Intern.EmployeeId).ToList();
+            var employeeMaybe = employeeLessRang.Where(q => !tempIdList.Contains(q.EmployeeId));
+            var employeeMaybeSelectList =employeeMaybe.Select(e => new
+            {
+                EmpId = e.EmployeeId,
+                Name = e.Name + " " + e.Surname + " " + e.Patronymic
+            }).ToList();
+            ViewBag.Employee = new SelectList(employeeMaybeSelectList, "EmpId", "Name");
             return View(employee);
         }
 
@@ -53,22 +66,49 @@ namespace RoadMapSystem.Controllers
             return View();
         }
 
-        // POST: Employees/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,Name,Surname,Patronymic,Email,PhoneNumber,EmployeeRoleId,RankId")] Employee employee)
+
+        public IActionResult AddExistingIntern(string MentorLogin, int? InternId)
         {
-            if (ModelState.IsValid)
+            if(MentorLogin == null || InternId == null)
             {
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return NotFound();
+
             }
-            ViewData["EmployeeRoleId"] = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName", employee.EmployeeRoleId);
-            ViewData["RankId"] = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle", employee.RankId);
-            return View(employee);
+            var Mentor = _context.Employee.Include(m => m.EmployeeAccount).Where(m=>m.EmployeeAccount.Login == MentorLogin).First();
+            var Intern = _context.Employee.Find(InternId);
+            if(Mentor == null || Intern == null)
+            {
+                return NotFound();
+            }
+            EmployeeMentors employeeMentors = new EmployeeMentors
+            {
+                MentorId = Mentor.EmployeeId,
+                InternId = Intern.EmployeeId,
+                DataOfMileStone = DateTime.Now
+            };
+            _context.EmployeeMentors.Add(employeeMentors);
+            _context.SaveChangesAsync();
+            return RedirectToAction("Info", new { login = Mentor.EmployeeAccount.Login });
+        }
+
+        public IActionResult RemoveExistingIntern(string MentorLogin, int? InternId)
+        {
+            if (MentorLogin == null || InternId == null)
+            {
+                return NotFound();
+
+            }
+            var Mentor = _context.Employee.Include(m => m.EmployeeAccount).Where(m => m.EmployeeAccount.Login == MentorLogin).First();
+            var Intern = _context.Employee.Find(InternId);
+            if (Mentor == null || Intern == null)
+            {
+                return NotFound();
+            }
+            var InternMentor = _context.EmployeeMentors.Include(m => m.Mentor).Where(m => m.Mentor.EmployeeAccount.Login == MentorLogin && m.InternId == InternId);
+            _context.EmployeeMentors.RemoveRange(InternMentor);
+            _context.SaveChangesAsync();
+            return RedirectToAction("Info", new { login = Mentor.EmployeeAccount.Login });
+
         }
 
         // GET: Employees/Edit/5
@@ -79,13 +119,15 @@ namespace RoadMapSystem.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await _context.Employee.Include(e => e.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {
                 return NotFound();
             }
             ViewData["EmployeeRoleId"] = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName", employee.EmployeeRoleId);
             ViewData["RankId"] = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle", employee.RankId);
+            ViewBag.Login = employee.EmployeeAccount.Login;
+
             return View(employee);
         }
 
@@ -119,43 +161,14 @@ namespace RoadMapSystem.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                string _login = _context.EmployeeAccount.FirstOrDefault(u => u.EmployeeAccountId == employee.EmployeeId).Login;
+                return RedirectToAction("Info", new {login = _login});
             }
             ViewData["EmployeeRoleId"] = new SelectList(_context.EmployeeRole, "EmployeeRoleId", "EmployeeRoleName", employee.EmployeeRoleId);
             ViewData["RankId"] = new SelectList(_context.EmployeeRank, "EmployeeRankId", "EmployeeRankTitle", employee.RankId);
             return View(employee);
         }
 
-        // GET: Employees/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _context.Employee
-                .Include(e => e.EmployeeRole)
-                .Include(e => e.Rank)
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            return View(employee);
-        }
-
-        // POST: Employees/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var employee = await _context.Employee.FindAsync(id);
-            _context.Employee.Remove(employee);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool EmployeeExists(int id)
         {

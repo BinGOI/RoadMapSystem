@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -6,6 +7,7 @@
     <title>@ViewData["Title"] - RoadMapSystem</title>
 
     <environment include="Development">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
@@ -30,9 +32,21 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="navbar-text">Hello @User.FindFirst(x => x.Type == "Namee").Value @User.FindFirst(x => x.Type == "Surname").Value @User.FindFirst(x => x.Type == "Patronymic").Value @User.FindFirst(x => x.Type == ClaimTypes.Role).Value</li>
+                        <li><a asp-area="" asp-controller="Employees" asp-action="Info" asp-route-login="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value">Профіль</a></li>
+                        <li><a asp-area="" asp-controller="MileStones" asp-action="Index" asp-route-login="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value">Milesnones</a></li>
+                    }
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a asp-controller="Account" asp-action="Logout">Вийти</a></li>
+                    }
+
                 </ul>
             </div>
         </div>
