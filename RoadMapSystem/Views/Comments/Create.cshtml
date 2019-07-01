@@ -10,19 +10,19 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <b>Коментар від: </b>
+            @(@ViewBag.Name + " " + @ViewBag.Surname)
             <div class="form-group">
-                <b>Коментар від: </b>
-                @(@ViewBag.Name + " " + @ViewBag.Surname)
-                <input type="hidden" asp-for="AuthorId" value="ViewBag.IdM" class="form-control" />
+                <input asp-for="AuthorId" value="ViewBag.IdM" class="form-control" />
             </div>
+            <b>Майлстоун: </b>
+            @ViewBag.Id
             <div class="form-group">
-                <b>Майлстоун: </b>
-                @ViewBag.Id
-                <input type="hidden" asp-for="MileStoneId" class="form-control" value="ViewBag.Id" />
+                <input asp-for="MileStoneId" class="form-control" value="ViewBag.Id" />
             </div>
             <div class="form-group">
                 <label asp-for="CommentValue" class="control-label"></label>
-                <input asp-for="CommentValue" class="form-control" />
+                <textarea asp-for="CommentValue" class="form-control"></textarea>
                 <span asp-validation-for="CommentValue" class="text-danger"></span>
             </div>
             <div class="form-group">

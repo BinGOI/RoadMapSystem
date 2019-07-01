@@ -11,7 +11,10 @@
     <h1>@ViewBag.Name  @ViewBag.Surname</h1>
     <hr />
     <br>
-    <a asp-action="Create" >Додати</a>
+    @if (ViewBag.Role != 1)
+    {
+        <a asp-action="Create" >Додати</a>
+    }
     @foreach (var item in Model)
     {
         <div class="row">
