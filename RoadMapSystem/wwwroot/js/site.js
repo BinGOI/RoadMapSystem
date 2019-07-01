@@ -14,7 +14,7 @@
 }
 
 function ClickPanel(idPanel) {
-    var ArrayPanel = ["InfoPanel", "MailStonePanel", "SkillPanel"];
+    var ArrayPanel = ["InfoPanel", "SkillPanel"];
     for (var i = 0; i < ArrayPanel.length; i++) {
         if (i == idPanel) {
             $("#" + ArrayPanel[i]).removeAttr('hidden');
