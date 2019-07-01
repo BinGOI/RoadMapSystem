@@ -9,22 +9,52 @@
 <div>
     <h4>MileStone</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd>
+    <div class="row">
+        <b>Дата milestone: </b>
+        <br />
+        @if (ViewBag.Role == 1)
+        {
             @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.EmployeeSkillValue)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.EmployeeSkillValue.EmployeeSkillValueId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.MileStoneId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+        }
+        else
+        {
+            <input asp-for="Date" class="form-control" />
+            <span asp-validation-for="Date" class="text-danger"></span>
+            <span asp-validation-for="Date" class="text-danger"></span>
+        }
+        <br />
+        <b>Навичка для перевірки: </b>
+        @Html.DisplayFor(model => model.EmployeeSkillValue.Skill.SkillTitle)
+        <br />
+        <b>Поточний рівень навики: </b>
+        @Html.DisplayFor(model => model.EmployeeSkillValue.Skill.SkillValue.SkillValueTitle)
+        <br />
+        <b>Опис навички: </b>
+        @Html.DisplayFor(model => model.EmployeeSkillValue.Skill.DescriptionOfSkill)
+        <br />
+        @if (Model.Comment.Count != 0)
+        {
+            <b>Коментарі: </b>
+            <br />
+            @foreach (var comment in Model.Comment)
+            {
+                @("Коментар від" + comment.MileStone.EmployeeSkillValue.Employee.Name + " " + comment.MileStone.EmployeeSkillValue.Employee.Surname) <a asp-action="Info" asp-route-login="@comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login">Переглянути</a>
+                <br>
+                @Html.DisplayName("Comment") @Html.DisplayFor(modelItem => comment.CommentValue)
+            }
+        }
+        @if (ViewBag.Role == 1)
+        {
+                <a asp-controller="Comments" asp-action="Create" asp-route-id="@Model.MileStoneId" asp-route-login="@ViewBag.Login">Додати коментар</a>
+            <br />
+        }
+        <b>Ментори: </b>
+        @foreach (var mentor in Model.EmployeeSkillValue.Employee.EmployeeMentorsIntern)
+        {
+            <br />
+            @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <a asp-controller="Employees" asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login"> Переглянути </a>
+            <br>
+        }
+
+        </div>
+    </div>

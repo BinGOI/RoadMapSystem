@@ -19,6 +19,7 @@
                 <div class="panel panel-default">
                     <div style="background-color:lightgreen" class="panel-heading">
                         <b>Інформація про майлстоун для @item.EmployeeSkillValue.Skill.SkillTitle</b>
+                        <a asp-action="Details" asp-route-id="@item.MileStoneId" asp-route-login="@item.EmployeeSkillValue.Employee.EmployeeAccount.Login">Детальніше...</a>
                     </div>
                     <div style="background-color:lightgreen" class="panel-body">
                         <b>Дата майлстоуна:</b> @Html.DisplayFor(modelItem => item.Date)
@@ -28,7 +29,7 @@
                         <b>Ментори: </b>
                         @foreach (var mentor in item.EmployeeSkillValue.Employee.EmployeeMentorsIntern)
                         {
-                            @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <br /> <a asp-action="Details" asp-route-id="@item.MileStoneId" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
+                            @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <br /> <a asp-controller="Employees" asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
                             <br>
                         }
                     </div>
