@@ -11,7 +11,7 @@
     <h1>@ViewBag.Name  @ViewBag.Surname</h1>
     <hr />
     <br>
-
+    <a asp-action="Create" >Додати</a>
     @foreach (var item in Model)
     {
         <div class="row">
@@ -28,7 +28,7 @@
                         <b>Ментори: </b>
                         @foreach (var mentor in item.EmployeeSkillValue.Employee.EmployeeMentorsIntern)
                         {
-                            @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <br /> <a asp-action="Info" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
+                            @(mentor.Mentor.Name + " " + mentor.Mentor.Surname + " " + mentor.Mentor.Patronymic) <br /> <a asp-action="Details" asp-route-id="@item.MileStoneId" asp-route-login="@mentor.Mentor.EmployeeAccount.Login">Переглянути</a>
                             <br>
                         }
                     </div>

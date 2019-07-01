@@ -45,13 +45,14 @@ namespace RoadMapSystem.Controllers
         }
 
         // GET: MileStones/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string login)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
+            var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
+            ViewBag.Name = Login.EmployeeRoleId;
             var mileStone = await _context.MileStone
                 .Include(m => m.EmployeeSkillValue)
                 .FirstOrDefaultAsync(m => m.MileStoneId == id);
