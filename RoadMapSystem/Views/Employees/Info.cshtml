@@ -8,7 +8,7 @@
 
     <div class="row">
         <h1>@Model.Surname  @Model.Name  @Model.Patronymic</h1>
-        <button class="btn btn-primary" onclick="ClickPanel(0)">Інформація</button><button class="btn btn-primary" onclick="ClickPanel(1)">Майлстоуни</button><button class="btn btn-primary" onclick="ClickPanel(2)">Навички</button>
+        <button class="btn btn-primary" onclick="ClickPanel(0)">Інформація</button><button class="btn btn-primary" onclick="ClickPanel(1)">Навички</button>
         <hr />
         <br>
         <div id="InfoPanel">
@@ -88,15 +88,28 @@
 
             }
         </div>
-        <div hidden id="MailStonePanel">
-            LOL1
         </div>
         <div hidden id="SkillPanel">
-            @foreach(var skill in Model.EmployeeSkillValue)
-            {
-                <h2>@skill.Skill.SkillTitle :  @skill.Skill.SkillValue.SkillValueTitle</h2>
-            }
-        </div>
-    </div>
+            <div class="container">
+                
+                    @foreach (var skill in Model.EmployeeSkillValue)
+                    {
+                        <div class="row">
+                        <div class="col-md-4">
+                            <h2>@skill.Skill.SkillTitle</h2>
+                        </div>
+
+                        <div class="col-md-4">
+                            <h2>@skill.Skill.SkillValue.SkillValueTitle</h2>
+                        </div> 
+                            </div>
+                      
+
+
+                    }               
+                </div>
+                <a class="btn btn-primary" asp-action="SkillCompare" asp-route-login="@Model.EmployeeAccount.Login">Порівняти</a>
+            </div>
+ 
 
 

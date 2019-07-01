@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RoadMapSystem.Models.DB;
+using RoadMapSystem.ViewModels;
 
 namespace RoadMapSystem.Controllers
 {
@@ -56,6 +57,45 @@ namespace RoadMapSystem.Controllers
             }).ToList();
             ViewBag.Employee = new SelectList(employeeMaybeSelectList, "EmpId", "Name");
             return View(employee);
+        }
+
+
+        public async Task<IActionResult> SkillCompare(string login)
+        {
+            if (login == null)
+            {
+                return NotFound();
+            }
+
+            var employee = await _context.Employee
+                .Include(e => e.EmployeeRole)
+                .Include(e => e.Rank)
+                .Include(e => e.EmployeeAccount)
+                .Include(e => e.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
+                .Include(e => e.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
+                .Include(e => e.EmployeeSkillValue).ThenInclude(s => s.Skill).ThenInclude(s => s.SkillValue)
+
+                .FirstOrDefaultAsync(e => e.EmployeeAccount.Login == login);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            var employeeRank =  _context.EmployeeRank.Where(u => u.EmployeeRankId == employee.RankId + 1).Include(u => u.SkillValueRank).ThenInclude(u => u.Skill).ThenInclude(u => u.SkillValue).First();
+ 
+            if (employeeRank == null)
+            {
+                employeeRank = _context.EmployeeRank.Where(u => u.EmployeeRankId == employee.RankId).Include(u => u.SkillValueRank).ThenInclude(u => u.Skill).ThenInclude(u => u.SkillValue).First();
+            }
+            if (employeeRank == null)
+            {
+                return NotFound();
+            }
+            var ComparerModel = new CompareModel
+            {
+                employeeProfile = employee,
+                compRank = employeeRank
+            };
+            return View(ComparerModel);
         }
 
         // GET: Employees/Create
