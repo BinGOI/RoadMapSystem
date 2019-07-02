@@ -38,10 +38,6 @@
                         <li><a asp-area="" asp-controller="Employees" asp-action="Info" asp-route-login="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value">Профіль</a></li>
                         <li><a asp-area="" asp-controller="MileStones" asp-action="Index" asp-route-login="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value">Milesnones</a></li>
                     }
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li><a asp-controller="Account" asp-action="Logout">Вийти</a></li>
