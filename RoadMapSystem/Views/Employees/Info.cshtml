@@ -23,9 +23,9 @@
                         <br>
                         @Html.DisplayNameFor(model => model.PhoneNumber) @Html.DisplayFor(model => model.PhoneNumber)
                         <br>
-                        @Html.DisplayNameFor(model => model.EmployeeRole) @Html.DisplayFor(model => model.EmployeeRole.EmployeeRoleName)
+                        Посада @Html.DisplayFor(model => model.EmployeeRole.EmployeeRoleName)
                         <br>
-                        @Html.DisplayNameFor(model => model.Rank) @Html.DisplayFor(model => model.Rank.EmployeeRankTitle)
+                        Технічний рівень @Html.DisplayFor(model => model.Rank.EmployeeRankTitle)
                         <br>
                         @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
                         {
@@ -61,7 +61,7 @@
                             {
                                 @(mentor.Intern.Name + " " + mentor.Intern.Surname + " " + mentor.Intern.Patronymic) <a asp-action="Info" asp-route-login="@mentor.Intern.EmployeeAccount.Login">Переглянути</a> @if (Model.EmployeeAccount.Login == User.FindFirst(u => u.Type == ClaimTypes.Name).Value)
                                 {
-                                    <a asp-controller="Employees" asp-action="RemoveExistingIntern" asp-route-mentorlogin="@Model.EmployeeAccount.Login" asp-route-internid="@mentor.InternId">Відмовитися від підлпічного</a>
+                                    <a asp-controller="Employees" asp-action="RemoveExistingIntern" asp-route-mentorlogin="@Model.EmployeeAccount.Login" asp-route-internid="@mentor.InternId">Відмовитися від підопічного</a>
                                 }
                                 <br>
 

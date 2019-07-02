@@ -11,6 +11,8 @@ namespace RoadMapSystem.Models.DB
         public int MileStoneId { get; set; }
         [Required]
         [MaxLength(5000)]
+
+        [Display(Name = "Коментар")]
         public string CommentValue { get; set; }
 
         public MileStone MileStone { get; set; }
