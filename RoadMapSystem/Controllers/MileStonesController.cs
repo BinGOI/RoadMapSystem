@@ -37,6 +37,7 @@ namespace RoadMapSystem.Controllers
             var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
             ViewBag.Name = Login.Name;
             ViewBag.Surname = Login.Surname;
+            ViewBag.Role = Login.EmployeeRoleId;
             if (roadMapSystemContext == null)
             {
                 return NotFound();
