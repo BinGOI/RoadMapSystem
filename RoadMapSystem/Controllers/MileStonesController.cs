@@ -18,6 +18,31 @@ namespace RoadMapSystem.Controllers
             _context = context;
         }
 
+        public async Task<IActionResult> IndexForMentor(string login)
+        {
+            if (login == null)
+            {
+                return NotFound();
+            }
+
+            var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
+
+            var roadMapSystemContext = _context.MileStone.Include(m => m.EmployeeSkillValue)
+                .Include(m => m.EmployeeSkillValue.Skill)
+                .Include(m => m.Comment)
+                .Include(m => m.EmployeeSkillValue.Employee)
+                .Where(m => m.EmployeeSkillValue.Employee.EmployeeMentorsIntern.Any(z => z.MentorId == Login.EmployeeId));
+
+            ViewBag.Name = Login.Name;
+            ViewBag.Surname = Login.Surname;
+            ViewBag.Role = Login.EmployeeRoleId;
+            if (roadMapSystemContext == null)
+            {
+                return NotFound();
+            }
+            return View(await roadMapSystemContext.ToListAsync());
+        }
+
         // GET: MileStones
         public async Task<IActionResult> Index(string login)
         {
@@ -26,17 +51,29 @@ namespace RoadMapSystem.Controllers
                 return NotFound();
             }
 
+            //var roadMapSystemContext = _context.MileStone.Include(m => m.EmployeeSkillValue)
+            //    .Include(m => m.EmployeeSkillValue.Skill)
+            //    .Include(m => m.Comment)
+            //    .Include(m => m.EmployeeSkillValue.Employee)
+            //    .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
+            //    .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
+            //    .Where(m => m.EmployeeSkillValue.Employee.EmployeeAccount.Login == login);
+
+            var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
+
             var roadMapSystemContext = _context.MileStone.Include(m => m.EmployeeSkillValue)
                 .Include(m => m.EmployeeSkillValue.Skill)
                 .Include(m => m.Comment)
                 .Include(m => m.EmployeeSkillValue.Employee)
                 .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
                 .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
-                .Where(m => m.EmployeeSkillValue.Employee.EmployeeAccount.Login == login);
+                .Include(m => m.EmployeeSkillValue.Employee.EmployeeAccount)
+                .Where(m => m.EmployeeSkillValue.Employee.EmployeeMentorsIntern.Any(z => z.MentorId == Login.EmployeeId) || m.EmployeeSkillValue.Employee.EmployeeAccount.Login == login);
 
-            var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
+            //var Login = await _context.Employee.Include(m => m.EmployeeAccount).FirstOrDefaultAsync(m => m.EmployeeAccount.Login == login);
             ViewBag.Name = Login.Name;
             ViewBag.Surname = Login.Surname;
+            ViewBag.Login = Login.EmployeeAccount.Login;
             ViewBag.Role = Login.EmployeeRoleId;
             if (roadMapSystemContext == null)
             {

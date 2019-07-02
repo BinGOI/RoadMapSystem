@@ -6,7 +6,6 @@
 @{
     ViewData["Title"] = "Details";
 }
-
 <div class="row">
     <h1>@ViewBag.Name  @ViewBag.Surname</h1>
     <hr />
@@ -19,12 +18,21 @@
     {
         <div class="row">
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div style="background-color:lightgreen" class="panel-heading">
+                @{
+                    string color = "background-color:lightpink";
+                    @if (item.EmployeeSkillValue.Employee.EmployeeAccount.Login == User.FindFirst(x => x.Type == ClaimTypes.Name).Value)
+                    {
+                        color = "background-color:lightgreen";
+                    }
+                }
+                <div style=@color class="panel panel-default">
+                    <div style=@color class="panel-heading">
                         <b>Інформація про майлстоун для @item.EmployeeSkillValue.Skill.SkillTitle</b>
                         <a asp-action="Details" asp-route-id="@item.MileStoneId" asp-route-login="@item.EmployeeSkillValue.Employee.EmployeeAccount.Login">Детальніше...</a>
                     </div>
-                    <div style="background-color:lightgreen" class="panel-body">
+                    <div class="panel-body">
+                        <b>Майлстоун для:</b> @(item.EmployeeSkillValue.Employee.Name + " " + item.EmployeeSkillValue.Employee.Surname)
+                        <br>
                         <b>Дата майлстоуна:</b> @Html.DisplayFor(modelItem => item.Date)
                         <br>
                         <b>Скіл для перевірки:</b> @Html.DisplayFor(modelItem => item.EmployeeSkillValue.Skill.SkillTitle)
