@@ -157,10 +157,10 @@ namespace RoadMapSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var comment = await _context.Comment.FindAsync(id);
+            var comment =  _context.Comment.Include(u => u.MileStone).ThenInclude(u => u.EmployeeSkillValue).ThenInclude(u => u.Employee).ThenInclude(u => u.EmployeeAccount).Where(u => u.CommentId == id).FirstOrDefault();
             _context.Comment.Remove(comment);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "MileStones", new { login = comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login });
         }
 
         private bool CommentExists(int id)
