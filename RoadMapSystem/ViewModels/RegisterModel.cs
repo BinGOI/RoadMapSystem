@@ -11,6 +11,7 @@ namespace RoadMapSystem.ViewModels
         [Display(Name = "Логін")]
         public string Login { get; set; }
         [Display(Name = "Пароль")]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [Display(Name = "Електронна адреса")]

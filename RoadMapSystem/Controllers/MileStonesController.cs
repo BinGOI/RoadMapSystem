@@ -156,6 +156,42 @@ namespace RoadMapSystem.Controllers
             return View(mileStone);
         }
 
+        public async Task<IActionResult> EditDate(int id, DateTime date)
+        {
+
+              var mileStone = await _context.MileStone.Include(m => m.EmployeeSkillValue)
+                .Include(m => m.EmployeeSkillValue.Skill)
+                .Include(m => m.EmployeeSkillValue.Skill.SkillValue)
+                .Include(m => m.Comment)
+                .Include(m => m.EmployeeSkillValue.Employee).ThenInclude(u => u.EmployeeAccount)
+                .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
+                .Include(m => m.EmployeeSkillValue.Employee.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
+                .FirstOrDefaultAsync(m => m.MileStoneId == id);
+            mileStone.Date = date;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(mileStone);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MileStoneExists(mileStone.MileStoneId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index", new { login = mileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login});
+            }
+            ViewData["EmployeeSkillValueId"] = new SelectList(_context.EmployeeSkillValue, "EmployeeSkillValueId", "EmployeeSkillValueId", mileStone.EmployeeSkillValueId);
+            return View(mileStone);
+        }
+
         // GET: MileStones/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

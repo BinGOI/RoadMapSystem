@@ -153,8 +153,7 @@ namespace RoadMapSystem.Controllers
         }
 
         // POST: Comments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var comment =  _context.Comment.Include(u => u.MileStone).ThenInclude(u => u.EmployeeSkillValue).ThenInclude(u => u.Employee).ThenInclude(u => u.EmployeeAccount).Where(u => u.CommentId == id).FirstOrDefault();

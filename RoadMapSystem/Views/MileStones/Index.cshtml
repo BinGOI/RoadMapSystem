@@ -63,7 +63,7 @@
                                 <b>@("Коментар від Team Lead")</b> <a asp-controller="Employees" asp-action="Info" asp-route-login="@comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login">Переглянути</a>
                                 @if (ViewBag.Role != 1)
                                 {
-                                    <a asp-controller="Comments" asp-action="Delete" asp-route-id="@comment.CommentId">Видалити коментар</a>
+                                    <a asp-controller="Comments" asp-action="DeleteConfirmed" asp-route-id="@comment.CommentId">Видалити коментар</a>
                                 }
                                     <br>
                                     @Html.DisplayName("Коментар: ") @Html.DisplayFor(modelItem => comment.CommentValue)

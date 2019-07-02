@@ -18,9 +18,16 @@
         }
         else
         {
-            <input asp-for="Date" class="form-control" />
-            <span asp-validation-for="Date" class="text-danger"></span>
-            <span asp-validation-for="Date" class="text-danger"></span>
+        
+    <form asp-action="EditDate">
+        <input asp-for="Date" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+        <span asp-validation-for="Date" class="text-danger"></span>
+        <input  name="id" class="form-control" value="@Model.MileStoneId" type="hidden"/>
+        <div class="form-group">
+            <input type="submit" value="Зберегти" class="btn btn-default" />
+        </div>
+    </form>
         }
         <br />
         <b>Навичка для перевірки: </b>

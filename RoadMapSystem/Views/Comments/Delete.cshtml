@@ -10,19 +10,19 @@
         <dt>
             Автор
         </dt>
-        <dd>
+        @*<dd>
             @Html.DisplayFor(model => model.AuthorId)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.CommentValue)
-        </dt>
+        </dt>*@
         <dd>
             @Html.DisplayFor(model => model.CommentValue)
         </dd>
-        <dt>
+        <dt hidden>
             @Html.DisplayNameFor(model => model.MileStone)
         </dt>
-        <dd>
+        <dd hidden>
             @Html.DisplayFor(model => model.MileStone.MileStoneId)
         </dd>
     </dl>
