@@ -80,11 +80,15 @@ namespace RoadMapSystem.Controllers
             {
                 return NotFound();
             }
-            var employeeRank =  _context.EmployeeRank.Where(u => u.EmployeeRankId == employee.RankId + 1).Include(u => u.SkillValueRank).ThenInclude(u => u.Skill).ThenInclude(u => u.SkillValue).First();
- 
-            if (employeeRank == null)
+            var employeeRankSeq =  _context.EmployeeRank.Where(u => u.EmployeeRankId == employee.RankId + 1).Include(u => u.SkillValueRank).ThenInclude(u => u.Skill).ThenInclude(u => u.SkillValue);
+            EmployeeRank employeeRank;
+            if (employeeRankSeq.Count() <= 0)
             {
                 employeeRank = _context.EmployeeRank.Where(u => u.EmployeeRankId == employee.RankId).Include(u => u.SkillValueRank).ThenInclude(u => u.Skill).ThenInclude(u => u.SkillValue).First();
+            }
+            else
+            {
+                employeeRank = _context.EmployeeRank.Where(u => u.EmployeeRankId == employee.RankId + 1).Include(u => u.SkillValueRank).ThenInclude(u => u.Skill).ThenInclude(u => u.SkillValue).First();
             }
             if (employeeRank == null)
             {
@@ -124,7 +128,7 @@ namespace RoadMapSystem.Controllers
             {
                 MentorId = Mentor.EmployeeId,
                 InternId = Intern.EmployeeId,
-                DataOfMileStone = DateTime.Now
+            
             };
             _context.EmployeeMentors.Add(employeeMentors);
             _context.SaveChangesAsync();
@@ -150,6 +154,25 @@ namespace RoadMapSystem.Controllers
             return RedirectToAction("Info", new { login = Mentor.EmployeeAccount.Login });
 
         }
+
+       public IActionResult ChangeRank(string login, int? rankid)
+        {
+            if (login == null || rankid == null)
+            {
+                return NotFound();
+            }
+            var employee = _context.Employee.Include(e => e.EmployeeAccount).Where(m => m.EmployeeAccount.Login == login).FirstOrDefault();
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            employee.RankId = rankid.Value;
+
+            _context.Update(employee);
+            _context.SaveChangesAsync();
+            return RedirectToAction("Info", new { login = login });
+        }
+
 
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -209,7 +232,7 @@ namespace RoadMapSystem.Controllers
             return View(employee);
         }
 
-
+        
         private bool EmployeeExists(int id)
         {
             return _context.Employee.Any(e => e.EmployeeId == id);

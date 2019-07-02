@@ -89,7 +89,7 @@ namespace RoadMapSystem.Controllers
                         {
                             MentorId = model.MentorId.Value,
                             InternId = employee.EmployeeId,
-                            DataOfMileStone = DateTime.Now
+                
                         };
                         _context.EmployeeMentors.Add(employeeMentors);
                     }

@@ -53,5 +53,9 @@
     }
 </div>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-primary" asp-action="Info" asp-route-login="@Model.employeeProfile.EmployeeAccount.Login">Назад</a>
+    @if (@Model.employeeProfile.EmployeeMentorsIntern.Any(u => u.Mentor.EmployeeAccount.Login == User.Identity.Name))
+    {
+    <a class="btn btn-primary" asp-controller="Employees" asp-action = "ChangeRank" asp-route-login="@Model.employeeProfile.EmployeeAccount.Login" asp-route-rankid ="@Model.compRank.EmployeeRankId">Підняти ранг</a>
+    }
 </div>

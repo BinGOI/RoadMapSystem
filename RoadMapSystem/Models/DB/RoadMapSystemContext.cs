@@ -124,9 +124,6 @@ namespace RoadMapSystem.Models.DB
 
                 entity.Property(e => e.InternId).HasColumnName("internId");
 
-                entity.Property(e => e.DataOfMileStone)
-                    .HasColumnName("dataOfMileStone")
-                    .HasColumnType("datetime");
 
                 entity.HasOne(d => d.Intern)
                     .WithMany(p => p.EmployeeMentorsIntern)
