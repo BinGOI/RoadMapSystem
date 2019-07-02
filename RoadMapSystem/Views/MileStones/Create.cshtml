@@ -5,33 +5,30 @@
     ViewData["Title"] = "Create";
 }
 
-<h2>Create</h2>
+<h2>Створити</h2>
 
-<h4>MileStone</h4>
+<h4>Майлстоун</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="EmployeeSkillValueId" class="control-label"></label>
+                <p>Виберіть працівника і його навичку </p>
                 <select asp-for="EmployeeSkillValueId" class="form-control" asp-items="ViewBag.EmployeeSkillValueId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
+                <p>Виберіть дату</p>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" asp-route-login="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value" value="Create" class="btn btn-default" />
+                <input type="submit" asp-route-login="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value" value="Створити" class="btn btn-default" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

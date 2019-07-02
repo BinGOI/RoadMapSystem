@@ -74,7 +74,6 @@ namespace RoadMapSystem.Controllers
                 .Include(e => e.EmployeeMentorsIntern).ThenInclude(m => m.Mentor).ThenInclude(m => m.EmployeeAccount)
                 .Include(e => e.EmployeeMentorsMentor).ThenInclude(m => m.Intern).ThenInclude(m => m.EmployeeAccount)
                 .Include(e => e.EmployeeSkillValue).ThenInclude(s => s.Skill).ThenInclude(s => s.SkillValue)
-
                 .FirstOrDefaultAsync(e => e.EmployeeAccount.Login == login);
             if (employee == null)
             {

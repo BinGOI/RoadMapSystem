@@ -68,13 +68,13 @@ namespace RoadMapSystem.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommentId,AuthorId,MileStoneId,CommentValue")] Comment comment)
+        public async Task<IActionResult> Create([Bind("CommentId,AuthorId,MileStoneId,CommentValue")] Comment comment, string Login)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "MileStones", new { login = Login });
             }
             ViewData["MileStoneId"] = new SelectList(_context.MileStone, "MileStoneId", "MileStoneId", comment.MileStoneId);
             return View(comment);
