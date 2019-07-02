@@ -75,7 +75,14 @@ namespace RoadMapSystem.Controllers
         // GET: MileStones/Create
         public IActionResult Create()
         {
-            ViewData["EmployeeSkillValueId"] = new SelectList(_context.EmployeeSkillValue, "EmployeeSkillValueId", "EmployeeSkillValueId");
+            var SkillList =
+                _context.EmployeeSkillValue
+                .Select(e => new
+                {
+                    EmployeeSkillValueId = e.EmployeeSkillValueId,
+                    SkillTitle = $"Milestone для {e.Employee.Name} {e.Employee.Surname} - {e.Skill.SkillTitle}" 
+                }).Distinct().ToList();
+            ViewData["EmployeeSkillValueId"] = new SelectList(SkillList, "EmployeeSkillValueId", "SkillTitle");
             return View();
         }
 
@@ -84,13 +91,13 @@ namespace RoadMapSystem.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MileStoneId,EmployeeSkillValueId,Date")] MileStone mileStone)
+        public async Task<IActionResult> Create([Bind("MileStoneId,EmployeeSkillValueId,Date")] MileStone mileStone, string Login)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(mileStone);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "MileStones", new { login = Login });
             }
             ViewData["EmployeeSkillValueId"] = new SelectList(_context.EmployeeSkillValue, "EmployeeSkillValueId", "EmployeeSkillValueId", mileStone.EmployeeSkillValueId);
             return View(mileStone);

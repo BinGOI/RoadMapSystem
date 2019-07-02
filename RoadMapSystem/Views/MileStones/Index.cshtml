@@ -60,9 +60,11 @@
                         <div style="background-color:lightyellow" class="panel-body">
                             @foreach (var comment in item.Comment)
                             {
-                                @("Comment from" + comment.MileStone.EmployeeSkillValue.Employee.Name + " " + comment.MileStone.EmployeeSkillValue.Employee.Surname) <a asp-action="Info" asp-route-login="@comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login">Переглянути</a>
+                                <b>@("Коментар від " + comment.MileStone.EmployeeSkillValue.Employee.Name + " " + comment.MileStone.EmployeeSkillValue.Employee.Surname)</b> <a asp-controller="Employees" asp-action="Info" asp-route-login="@comment.MileStone.EmployeeSkillValue.Employee.EmployeeAccount.Login">Переглянути</a>
                                 <br>
-                                @Html.DisplayName("Comment") @Html.DisplayFor(modelItem => comment.CommentValue)
+                                @Html.DisplayName("Коментар") @Html.DisplayFor(modelItem => comment.CommentValue)
+                                <br />
+                                <br />
                             }
                         </div>
                     </div>
